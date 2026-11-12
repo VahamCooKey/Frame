@@ -22,8 +22,8 @@ You need a commercial license from the copyright holder if you want to use Frame
 
 The commercial license covers the code written for Frame. It does not cover the third-party libraries Frame uses. mpv and FFmpeg have their own licenses, and you must arrange their terms separately. Qt is available from The Qt Company under commercial terms. See [NOTICE](NOTICE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
-## Ask about a commercial license
+## Contact
 
-Open an issue titled **Commercial license** in this repository. Leave out details of your deal; the issue only needs a way to reach you. The copyright holder will reply with a private contact address and the terms.
+Email [ganeshdg6@proton.me](mailto:ganeshdg6@proton.me) about a commercial license. Say what you are building and how you plan to ship it, and you'll get the terms back.
 
 Copyright (C) 2026 VahamCooKey.

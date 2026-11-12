@@ -139,9 +139,9 @@ Files that open in Frame get their own icons. Videos are blue, teal or violet wi
 
 Right-click the picture, choose **More → About Frame**, then **Check for updates**. Frame checks only when you ask.
 
-## Help
+## Contact and help
 
-Open an issue from the **Issues** tab. Include your Windows or Linux version, what you were doing, and any message you saw. Leave out copyrighted videos and private stream links. The [user guide](docs/USER-GUIDE.md) covers every feature in more detail.
+Open an issue from the **Issues** tab. Include your Windows or Linux version, what you were doing, and any message you saw. Leave out copyrighted videos and private stream links. For licensing or anything else, email [ganeshdg6@proton.me](mailto:ganeshdg6@proton.me). The [user guide](docs/USER-GUIDE.md) covers every feature in more detail.
 
 ## License
 
@@ -149,7 +149,7 @@ Frame has two licenses.
 
 **Free under the [GNU GPL v3](LICENSE).** Watch videos with it at home or at work, use it in personal, school and non-profit projects, and build it into free and open-source software that publishes its source under the GPL.
 
-**Paid commercial license.** If you want to put Frame's code into a product you sell or ship without publishing your source, you need a commercial license. [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) explains how to ask for one.
+**Paid commercial license.** If you want to put Frame's code into a product you sell or ship without publishing your source, you need a commercial license. Email [ganeshdg6@proton.me](mailto:ganeshdg6@proton.me), or read [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) first.
 
 Frame runs on [Qt](https://www.qt.io/) and [mpv](https://mpv.io/), which keep their own licenses. See [NOTICE](NOTICE) and [Licensing](docs/LICENSING.md).
 
