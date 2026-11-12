@@ -122,7 +122,7 @@ Frame plays music files too. You get the cover, title, artist and album over a w
 
 ### File icons on Windows
 
-Files that open in Frame get their own icons, with the format printed on a colored label you can read even in the smallest list view.
+Files that open in Frame get their own icons. Videos are blue, teal or violet with a play button, and music is amber, coral or yellow with a waveform, so you can tell them apart at a glance. The format name sits on a dark strip at the bottom, readable even in the smallest list view.
 
 ![File icons for MP4, MKV, WebM, MPEG, video, MP3, FLAC, Opus and audio](docs/images/file-icons.png)
 
