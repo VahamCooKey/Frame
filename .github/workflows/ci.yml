@@ -1,0 +1,85 @@
+name: Build and test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Ubuntu 26.04 build, tests, and playback
+    runs-on: ubuntu-24.04
+    container: ubuntu:26.04
+    steps:
+      - name: Install build tools and Qt
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake ninja-build meson curl patch pkg-config libmpv-dev qt6-base-dev qt6-declarative-dev qt6-svg-dev qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-dialogs qml6-module-qtquick-layouts qml6-module-qtquick-window qml6-module-qtqml-workerscript qml6-module-qtqml-models libxcb-cursor0 dbus-daemon xvfb xauth
+      - uses: actions/checkout@v4
+      - name: Build private audio runtime with upstream deadlock fix
+        run: |
+          bash scripts/bootstrap-pipewire.sh
+          echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE/third_party/pipewire-linux" >> "$GITHUB_ENV"
+      - name: Build
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build-linux --parallel 2
+      - name: Test
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: ctest --test-dir build-linux --output-on-failure
+      - name: Repeat startup without audio services
+        run: bash scripts/test-linux-audio-startup.sh build-linux
+      - name: Playback self-test
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          QT_XCB_GL_INTEGRATION: xcb_glx
+          XDG_RUNTIME_DIR: /tmp/runtime-frame
+        run: mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR" && xvfb-run -a build-linux/frame --selftest assets/test/sample.mkv
+      - name: First-frame startup regression
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          QT_XCB_GL_INTEGRATION: xcb_glx
+          XDG_RUNTIME_DIR: /tmp/runtime-frame
+        run: xvfb-run -a build-linux/test_startup_presentation
+
+  windows:
+    name: Windows build, tests, and playback
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Qt and libmpv
+        shell: pwsh
+        run: ./scripts/bootstrap.ps1
+      - name: Install Vulkan loader for libmpv
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'VulkanRT-X64-1.4.350.0-Components.zip'
+          Invoke-WebRequest -Uri 'https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/VulkanRT-X64-1.4.350.0-Components.zip' -OutFile $archive
+          $actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualHash -ne '23ce69f32cef3e2799617e2b1776cd0c71030d23a91f8375821cc40d76b185b9') { throw 'Vulkan runtime archive SHA-256 mismatch' }
+          $runtimeDir = Join-Path $env:RUNNER_TEMP 'frame-vulkan-runtime'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtimeDir -Force
+          $vulkanBin = Join-Path $runtimeDir 'VulkanRT-X64-1.4.350.0-Components\x64'
+          if (-not (Test-Path -LiteralPath (Join-Path $vulkanBin 'vulkan-1.dll'))) { throw 'Vulkan loader was not installed' }
+          Add-Content -LiteralPath $env:GITHUB_PATH -Value $vulkanBin
+      - name: Build and test
+        shell: pwsh
+        run: ./scripts/check.ps1 -SkipSelftest
+      - name: Playback self-test
+        shell: pwsh
+        run: |
+          ./build/Release/frame.exe --selftest assets/test/sample.mkv | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw 'Playback self-test failed' }
+      - name: First-frame startup regression
+        shell: pwsh
+        run: |
+          $env:PATH = "$PWD/third_party/Qt/6.8.3/msvc2022_64/bin;$env:PATH"
+          ./build/Release/test_startup_presentation.exe | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw 'First-frame startup regression failed' }

@@ -1,0 +1,160 @@
+name: Package and publish release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a new GitHub release after verification
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Qt and libmpv
+        shell: pwsh
+        run: ./scripts/bootstrap.ps1
+      - name: Install Vulkan loader for libmpv
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'VulkanRT-X64-1.4.350.0-Components.zip'
+          Invoke-WebRequest -Uri 'https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/VulkanRT-X64-1.4.350.0-Components.zip' -OutFile $archive
+          $actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualHash -ne '23ce69f32cef3e2799617e2b1776cd0c71030d23a91f8375821cc40d76b185b9') { throw 'Vulkan runtime archive SHA-256 mismatch' }
+          $runtimeDir = Join-Path $env:RUNNER_TEMP 'frame-vulkan-runtime'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtimeDir -Force
+          $vulkanBin = Join-Path $runtimeDir 'VulkanRT-X64-1.4.350.0-Components\x64'
+          if (-not (Test-Path -LiteralPath (Join-Path $vulkanBin 'vulkan-1.dll'))) { throw 'Vulkan loader was not installed' }
+          Add-Content -LiteralPath $env:GITHUB_PATH -Value $vulkanBin
+      - name: Verify tag matches the app version
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        run: if ((Get-Content CMakeLists.txt | Select-String '^project\(Frame VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value }) -ne $env:GITHUB_REF_NAME.TrimStart('v')) { throw 'Tag does not match CMake project version' }
+      - name: Build and test
+        shell: pwsh
+        run: ./scripts/check.ps1 -SkipSelftest
+      - name: Playback self-test
+        shell: pwsh
+        run: |
+          ./build/Release/frame.exe --selftest assets/test/sample.mkv | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw 'Playback self-test failed' }
+      - name: Create portable package
+        shell: pwsh
+        run: ./scripts/package.ps1
+      - name: First-frame startup regression
+        shell: pwsh
+        run: |
+          $env:PATH = "$PWD/third_party/Qt/6.8.3/msvc2022_64/bin;$env:PATH"
+          ./build/Release/test_startup_presentation.exe | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw 'First-frame startup regression failed' }
+      - name: Build Windows setup
+        shell: pwsh
+        run: |
+          $env:FRAME_VERSION = (Get-Item 'build/Release/frame.exe').VersionInfo.ProductVersion
+          Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile 'build/vc_redist.x64.exe'
+          $signature = Get-AuthenticodeSignature 'build/vc_redist.x64.exe'
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Microsoft') { throw 'Visual C++ runtime signature validation failed' }
+          choco install innosetup --no-progress -y
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          & $iscc installer/Frame.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup failed' }
+      - name: Verify Windows install and file integration
+        shell: pwsh
+        run: ./scripts/test-installer.ps1 -Installer "build/Frame-Setup-$((Get-Item 'build/Release/frame.exe').VersionInfo.ProductVersion).exe"
+      - name: Collect installer playback logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Frame-installer-diagnostics
+          path: ~/AppData/Roaming/Frame/logs/*.log
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Frame-Windows-x64
+          path: |
+            build/Frame-*-win-x64.zip
+            build/Frame-Setup-*.exe
+          if-no-files-found: error
+
+  linux:
+    runs-on: ubuntu-24.04
+    container: ubuntu:26.04
+    steps:
+      - name: Install build tools and Qt
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake ninja-build meson curl patch pkg-config libmpv-dev qt6-base-dev qt6-declarative-dev qt6-svg-dev qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-dialogs qml6-module-qtquick-layouts qml6-module-qtquick-window qml6-module-qtqml-workerscript qml6-module-qtqml-models libxcb-cursor0 dbus-daemon xvfb xauth
+      - uses: actions/checkout@v4
+      - name: Build private audio runtime with upstream deadlock fix
+        run: |
+          bash scripts/bootstrap-pipewire.sh
+          echo "LD_LIBRARY_PATH=$GITHUB_WORKSPACE/third_party/pipewire-linux" >> "$GITHUB_ENV"
+      - name: Verify tag matches the app version
+        if: github.ref_type == 'tag'
+        run: grep -Fq "project(Frame VERSION ${GITHUB_REF_NAME#v} " CMakeLists.txt
+      - name: Build and test
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build-linux --parallel 2 && ctest --test-dir build-linux --output-on-failure
+        env:
+          QT_QPA_PLATFORM: offscreen
+      - name: Repeat startup without audio services
+        run: bash scripts/test-linux-audio-startup.sh build-linux
+      - name: Playback self-test
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          QT_XCB_GL_INTEGRATION: xcb_glx
+          XDG_RUNTIME_DIR: /tmp/runtime-frame
+        run: mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR" && xvfb-run -a build-linux/frame --selftest assets/test/sample.mkv
+      - name: Build Ubuntu package
+        run: bash scripts/package-deb.sh build-linux
+      - name: First-frame startup regression
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          QT_XCB_GL_INTEGRATION: xcb_glx
+          XDG_RUNTIME_DIR: /tmp/runtime-frame
+        run: xvfb-run -a build-linux/test_startup_presentation
+      - name: Install and smoke-test package
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          QT_XCB_GL_INTEGRATION: xcb_glx
+          XDG_RUNTIME_DIR: /tmp/runtime-frame
+        run: |
+          dpkg -i build/frame_*_amd64.deb
+          cmp assets/input.conf /opt/frame/input.conf
+          mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
+          xvfb-run -a frame --selftest assets/test/sample.mkv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Frame-Ubuntu-26.04-amd64
+          path: build/frame_*_amd64.deb
+          if-no-files-found: error
+
+  publish:
+    if: (github.event_name == 'push' && github.ref_type == 'tag') || inputs.publish == true
+    needs: [windows, linux]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version="$(sed -n 's/^project(Frame VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt | head -n1)"
+          test -n "$version"
+          gh release create "v$version" artifacts/* --target "$GITHUB_SHA" --title "Frame $version" --notes-file RELEASE-NOTES.md

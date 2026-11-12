@@ -1,0 +1,26 @@
+build/
+build-*/
+build-tmp/
+third_party/
+*.user
+.vs/
+CMakeLists.txt.user
+*.log
+*.tmp
+__pycache__/
+*.pyc
+Samples/
+
+# Local IDE and agent state
+.claude/
+.codex/
+.agents/
+
+# Local test scratch: contains a live Jellyfin api_key.
+URLs For Testing.md
+
+# Editor plugin logs
+Saved/
+
+# Recoverable local cleanup archives
+.local-archive/

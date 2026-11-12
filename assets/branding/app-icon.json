@@ -1,0 +1,17 @@
+{
+  "source": "concepts/frame-player-icon-v1.svg",
+  "sourceSha256": "fba998680b0e59618c43dce74e68483ea551b5534ba09303847c2758e5a43851",
+  "iconSha256": "f2ae627e01bd2a9e72784b30da7c92cba52f7d9d031e195d7b4fc4d763c89958",
+  "sizes": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    96,
+    128,
+    256
+  ]
+}

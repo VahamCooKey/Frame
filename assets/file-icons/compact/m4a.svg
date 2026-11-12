@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="Frame M4A audio file">
+  <title>Frame M4A audio file</title>
+  <path fill="#BA6500" d="M0 28V12A12 12 0 0 1 12 0H36A12 12 0 0 1 48 12V28Z"/>
+  <path fill="#FFAD46" d="M1 28V12A11 11 0 0 1 12 1H36A11 11 0 0 1 47 12V28Z"/>
+  <path fill="#202020" d="M0 28H48V43A5 5 0 0 1 43 48H5A5 5 0 0 1 0 43Z"/>
+  <g fill="#202020"><rect x="11" y="10" width="3" height="8"/><rect x="17" y="7" width="3" height="14"/><rect x="23" y="4" width="3" height="20"/><rect x="29" y="7" width="3" height="14"/><rect x="35" y="10" width="3" height="8"/></g>
+  <path fill="#F5F4F0" transform="matrix(0.006777 0 0 -0.006836 1.2937 45)" d="M178 2048H712L1276 672H1300L1864 2048H2398V0H1978V1333H1961L1431 10H1145L615 1338H598V0H178ZM2711 360V701L3566 2048H3860V1576H3686L3147 723V707H4362V360ZM3694 0V464L3702 615V2048H4108V0ZM5016 0H4552L5259 2048H5817L6523 0H6059L5546 1580H5530ZM4987 805H6083V467H4987Z"/>
+</svg>

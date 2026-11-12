@@ -1,0 +1,85 @@
+name: Verify and publish packaged release
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Completed release build whose packages should be verified
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify package provenance
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+        run: |
+          if ($env:BUILD_RUN_ID -notmatch '^\d+$') { throw 'Invalid build run ID' }
+          $build = gh run view $env:BUILD_RUN_ID --json headSha,jobs,workflowName | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $build.workflowName -ne 'Package and publish release') { throw 'Expected a release build from this repository' }
+          foreach ($step in @('Build and test', 'Playback self-test', 'First-frame startup regression', 'Create portable package', 'Build Windows setup')) {
+            if (-not ($build.jobs | Where-Object name -EQ 'windows').steps.Where({ $_.name -eq $step -and $_.conclusion -eq 'success' })) { throw "Build gate did not pass: $step" }
+          }
+          if (($build.jobs | Where-Object name -EQ 'linux').conclusion -ne 'success') { throw 'Ubuntu package checks did not pass' }
+          git diff --exit-code $build.headSha HEAD -- CMakeLists.txt src qml installer assets licenses scripts/package.ps1 scripts/bootstrap.ps1 THIRD-PARTY-NOTICES.md NOTICE LICENSE
+          if ($LASTEXITCODE -ne 0) { throw 'Package source differs; create a fresh release build' }
+          Write-Host "Reusing unchanged packages built from $($build.headSha)"
+      - uses: actions/download-artifact@v4
+        with:
+          name: Frame-Windows-x64
+          path: packages
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify installed file integration and playback
+        shell: pwsh
+        run: |
+          $version = (Get-Content CMakeLists.txt | Select-String '^project\(Frame VERSION ([0-9.]+)' | ForEach-Object { $_.Matches[0].Groups[1].Value })
+          ./scripts/test-installer.ps1 -Installer "packages/Frame-Setup-$version.exe"
+      - name: Collect installer playback logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Frame-installer-verification-logs
+          path: ~/AppData/Roaming/Frame/logs/*.log
+          if-no-files-found: warn
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: Frame-Windows-x64
+          path: packages
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: Frame-Ubuntu-26.04-amd64
+          path: packages
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+      - name: Publish verified packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version="$(sed -n 's/^project(Frame VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt | head -n1)"
+          test -n "$version"
+          gh release create "v$version" packages/* --target "$GITHUB_SHA" --title "Frame $version" --notes-file RELEASE-NOTES.md

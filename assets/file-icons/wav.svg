@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Frame WAV audio file">
+  <title>Frame WAV audio file</title>
+  <path fill="#B94300" d="M24 160V80A64 64 0 0 1 88 16H168A64 64 0 0 1 232 80V160Z"/>
+  <path fill="#FF8E60" d="M28 160V80A60 60 0 0 1 88 20H168A60 60 0 0 1 228 80V160Z"/>
+  <path fill="#5C5C5C" d="M24 160H232V206A34 34 0 0 1 198 240H58A34 34 0 0 1 24 206Z"/>
+  <path fill="#202020" d="M28 160H228V206A30 30 0 0 1 198 236H58A30 30 0 0 1 28 206Z"/>
+  <g fill="#202020"><rect x="56" y="67" width="16" height="42" rx="8"/><rect x="88" y="53" width="16" height="70" rx="8"/><rect x="120" y="39" width="16" height="98" rx="8"/><rect x="152" y="53" width="16" height="70" rx="8"/><rect x="184" y="67" width="16" height="42" rx="8"/></g>
+  <path fill="#F5F4F0" transform="matrix(0.019531 0 0 -0.019531 57.3555 220)" d="M639 0 53 2048H526L865 625H882L1256 2048H1661L2034 622H2052L2391 2048H2864L2278 0H1856L1466 1339H1450L1061 0ZM3508 0H3044L3751 2048H4309L5015 0H4551L4038 1580H4022ZM3479 805H4575V467H3479ZM5691 2048 6186 492H6205L6701 2048H7181L6475 0H5917L5210 2048Z"/>
+</svg>

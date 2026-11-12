@@ -1,0 +1,55 @@
+Frame
+Copyright (C) 2026 VahamCooKey
+
+Frame is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 3 of the License only. See the LICENSE file for the full
+license text.
+
+Commercial licensing
+--------------------
+The copyright holder also offers Frame's own source code under a separate
+commercial license for use in closed-source or paid products. See
+COMMERCIAL-LICENSE.md.
+
+Third-party components
+----------------------
+
+libmpv
+    Frame bundles and links against libmpv and uses the mpv render API
+    (mpv_render_context / render_gl) to present video. libmpv is Copyright
+    (C) the mpv project, licensed under the GNU General Public License
+    version 2 or later (GPLv2+); the prebuilt binaries used here are built
+    with GPL-enabled FFmpeg. FFmpeg terms depend on the components and build
+    configuration. libmpv is linked dynamically and is bundled with Windows
+    packages; Linux uses the distribution's libmpv package.
+
+Qt 6.8
+    Qt is Copyright (C) The Qt Company Ltd. and other contributors. Frame
+    uses Qt 6.8 (Core, Gui, Qml, Quick, QuickControls2) under the GNU Lesser
+    General Public License version 3 (LGPLv3). Qt is used exclusively as
+    dynamically linked libraries; users may replace or relink against a
+    modified Qt. Qt binaries were obtained via aqtinstall
+    (win64_msvc2022_64, Qt 6.8.3).
+
+Prebuilt binaries
+-----------------
+The binary was built against prebuilt libmpv development artifacts from the
+zhongfly/mpv-winbuild project (mpv-dev-x86_64 builds) and Qt 6.8.3 binaries
+installed with aqtinstall. Version details are recorded in
+third_party/VERSIONS.txt.
+
+Corresponding source
+--------------------
+The Frame application source is provided in this repository. Windows bundles
+libmpv from the pinned upstream mpv-winbuild release listed in
+third_party/VERSIONS.txt; it is dynamically linked. The upstream project and
+its build records are at https://github.com/zhongfly/mpv-winbuild. Linux links
+to the distribution's libmpv package. FFmpeg components and other libraries
+are subject to their own licenses; see THIRD-PARTY-NOTICES.md and
+docs/LICENSING.md for their upstream source and license information.
+
+Qt's LGPL license text is included in licenses/LGPL-3.0-only.txt. Windows Qt
+libraries are dynamically linked and remain replaceable. Qt source and
+corresponding source terms are available at https://www.qt.io/licensing/
+open-source-lgpl-obligations.

@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.24)
+project(FrameIconExport LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Gui Svg)
+add_executable(frame-icon-export main.cpp)
+target_link_libraries(frame-icon-export PRIVATE Qt6::Gui Qt6::Svg)

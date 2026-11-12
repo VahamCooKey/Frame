@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Frame AVI video file">
+  <title>Frame AVI video file</title>
+  <path fill="#5D4FB9" d="M24 160V50A34 34 0 0 1 58 16H198A34 34 0 0 1 232 50V160Z"/>
+  <path fill="#5C5C5C" d="M24 160H232V206A34 34 0 0 1 198 240H58A34 34 0 0 1 24 206Z"/>
+  <path fill="#202020" d="M28 160H228V206A30 30 0 0 1 198 236H58A30 30 0 0 1 28 206Z"/>
+  <path fill="#F5F4F0" transform="translate(0 -40)" d="M107.5,90.5c-4.7-2.8-10.7.6-10.7,6.1v62.8c0,5.5,6,8.9,10.7,6.1l56.3-31.4c4.8-2.7,4.8-9.5,0-12.2l-56.3-31.4Z"/>
+  <path fill="#F5F4F0" transform="matrix(0.019531 0 0 -0.019531 79.0742 220)" d="M531 0H67L774 2048H1332L2038 0H1574L1061 1580H1045ZM502 805H1598V467H502ZM2714 2048 3209 492H3228L3724 2048H4204L3498 0H2940L2233 2048ZM4943 2048V0H4510V2048Z"/>
+</svg>

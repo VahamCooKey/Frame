@@ -1,0 +1,29 @@
+{
+  "source": "../branding/concepts/frame-player-icon-v1.svg",
+  "font": "Inter Bold",
+  "cornerRadius": 34,
+  "generation": 3,
+  "formats": [
+    { "id": "mp4", "kind": "video", "label": "MP4", "color": "#2A6CC9", "colorName": "Blue", "extensions": ["mp4"] },
+    { "id": "mkv", "kind": "video", "label": "MKV", "color": "#00789F", "colorName": "Teal", "extensions": ["mkv"] },
+    { "id": "mov", "kind": "video", "label": "MOV", "color": "#2A6CC9", "colorName": "Blue", "extensions": ["mov"] },
+    { "id": "avi", "kind": "video", "label": "AVI", "color": "#5D4FB9", "colorName": "Violet", "extensions": ["avi"] },
+    { "id": "webm", "kind": "video", "label": "WEBM", "color": "#00789F", "colorName": "Teal", "extensions": ["webm"] },
+    { "id": "m4v", "kind": "video", "label": "M4V", "color": "#2A6CC9", "colorName": "Blue", "extensions": ["m4v"] },
+    { "id": "flv", "kind": "video", "label": "FLV", "color": "#5D4FB9", "colorName": "Violet", "extensions": ["flv"] },
+    { "id": "wmv", "kind": "video", "label": "WMV", "color": "#5D4FB9", "colorName": "Violet", "extensions": ["wmv"] },
+    { "id": "ts", "kind": "video", "label": "TS", "color": "#5D4FB9", "colorName": "Violet", "extensions": ["ts", "m2ts"] },
+    { "id": "mpeg", "kind": "video", "label": "MPEG", "tinyLabel": "MPG", "color": "#5D4FB9", "colorName": "Violet", "extensions": ["mpg", "mpeg"] },
+    { "id": "ogv", "kind": "video", "label": "OGV", "color": "#00789F", "colorName": "Teal", "extensions": ["ogv"] },
+    { "id": "3gp", "kind": "video", "label": "3GP", "color": "#2A6CC9", "colorName": "Blue", "extensions": ["3gp"] },
+    { "id": "video", "kind": "video", "label": "VIDEO", "tinyLabel": "VID", "color": "#5D708C", "colorName": "Slate", "extensions": [] },
+    { "id": "mp3", "kind": "audio", "label": "MP3", "color": "#FFAD46", "colorName": "Amber", "extensions": ["mp3"] },
+    { "id": "m4a", "kind": "audio", "label": "M4A", "color": "#FFAD46", "colorName": "Amber", "extensions": ["m4a"] },
+    { "id": "flac", "kind": "audio", "label": "FLAC", "color": "#FF8E60", "colorName": "Coral", "extensions": ["flac"] },
+    { "id": "wav", "kind": "audio", "label": "WAV", "color": "#FF8E60", "colorName": "Coral", "extensions": ["wav"] },
+    { "id": "aac", "kind": "audio", "label": "AAC", "color": "#FFAD46", "colorName": "Amber", "extensions": ["aac"] },
+    { "id": "ogg", "kind": "audio", "label": "OGG", "color": "#F0CF4C", "colorName": "Gold", "extensions": ["ogg"] },
+    { "id": "opus", "kind": "audio", "label": "OPUS", "color": "#F0CF4C", "colorName": "Gold", "extensions": ["opus"] },
+    { "id": "audio", "kind": "audio", "label": "AUDIO", "tinyLabel": "AUD", "color": "#D3BDA6", "colorName": "Sand", "extensions": [] }
+  ]
+}
