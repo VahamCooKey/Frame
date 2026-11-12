@@ -1,6 +1,6 @@
 # Frame
 
-**A modern video player for Windows and Linux. Every feature is one key away.**
+**A modern video player for Windows and Linux. Every important feature is one key away.**
 
 Frame opens your film and gets out of the way. The controls fade when you stop moving the mouse, and the keyboard reaches everything else: subtitles, chapters, speed, the playlist, screenshots. You never dig through a menu bar to find them.
 
