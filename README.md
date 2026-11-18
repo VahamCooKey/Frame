@@ -12,9 +12,9 @@ Open **[Releases](../../releases/latest)** and pick the file for your computer:
 
 | Your computer | Download | How to install |
 |---|---|---|
-| Windows 10 or 11 (64-bit) | `Frame-Setup-0.8.0.exe` | Run it and follow the steps. |
-| Windows, without installing | `Frame-0.8.0-win-x64.zip` | Unzip it anywhere and open `frame.exe`. |
-| Ubuntu 26.04 (64-bit) | `frame_0.8.0_amd64.deb` | Open it in App Center, or run `sudo apt install ./frame_0.8.0_amd64.deb`. |
+| Windows 10 or 11 (64-bit) | `Frame-Setup-0.8.1.exe` | Run it and follow the steps. |
+| Windows, without installing | `Frame-0.8.1-win-x64.zip` | Unzip it anywhere and open `frame.exe`. |
+| Ubuntu 26.04 (64-bit) | `frame_0.8.1_amd64.deb` | Open it in App Center, or run `sudo apt install ./frame_0.8.1_amd64.deb`. |
 
 Setup on Windows has one box to tick if you want Frame to open your video files. Music files are a separate choice. You can also right-click any video and pick **Open with → Frame**.
 
@@ -137,7 +137,7 @@ Files that open in Frame get their own icons. Videos are blue, teal or violet wi
 
 ## Updates
 
-Right-click the picture, choose **More → About Frame**, then **Check for updates**. Frame checks only when you ask.
+Right-click the picture and choose **Check for updates**. Frame checks only when you ask.
 
 ## Contact and help
 

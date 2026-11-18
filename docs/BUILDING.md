@@ -54,4 +54,4 @@ window/media-control and rendered-video checks; those need a desktop session.
 
 ## Release packages
 
-Push a version tag such as `v0.8.0` to build the Windows setup and portable ZIP, and the Ubuntu `.deb`. GitHub Actions attaches those files to a GitHub Release.
+Push a version tag such as `v0.8.1` to build the Windows setup and portable ZIP, and the Ubuntu `.deb`. GitHub Actions attaches those files to a GitHub Release.

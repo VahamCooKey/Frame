@@ -21,7 +21,7 @@ The release job runs `scripts/test-installer.ps1` in a disposable Windows accoun
 The test refuses an account with an existing Frame installation. Do not run it in your normal account:
 
 ```powershell
-./scripts/test-installer.ps1 -Installer build/Frame-Setup-0.8.0.exe
+./scripts/test-installer.ps1 -Installer build/Frame-Setup-0.8.1.exe
 ```
 
 References: [Microsoft application registration](https://learn.microsoft.com/en-us/windows/win32/shell/app-registration), [Default Programs](https://learn.microsoft.com/en-us/windows/win32/shell/default-programs), and [Mozilla's Windows preference implementation](https://github.com/mozilla/gecko-dev/blob/master/browser/components/shell/WindowsUserChoice.cpp).

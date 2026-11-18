@@ -489,6 +489,8 @@ Menu {
         // Panels. Playback info and About live in More (round 13).
         root.addSeparator(root)
         action("script-message app-toggle-playlist", "playlist", "Playlist", false)
+        // No input.conf binding; opens About and starts the check (main.qml).
+        action("script-message app-check-updates", "update", "Check for updates", true)
         action("script-message app-settings", "settings", "", false)
 
         root.fillLeftovers(more, tree)
@@ -651,8 +653,7 @@ Menu {
             ["playlist-prev", "playlist-next"],
             ["script-message app-bookmark-add"],
             ["script-message app-cycle-time-display", "script-message app-shortcut-guide"],
-            // About has no input.conf binding; the entry is made here. Its
-            // dialog carries Check for updates (main.qml).
+            // About has no input.conf binding; the entry is made here.
             ["script-message app-playback-info",
              { command: "script-message app-about", label: "About Frame" }]
         ]
